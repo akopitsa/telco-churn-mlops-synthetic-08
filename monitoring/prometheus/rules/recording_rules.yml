@@ -65,11 +65,13 @@ groups:
           sum(rate(prediction_latency_seconds_count[5m]))
 
       # Churn rate from predictions — rolling 1 hour
+      # clamp_min guards against 0/0 = NaN (Grafana can't render NaN) when
+      # there's no prediction traffic yet in the 1h window.
       - record: job:predicted_churn_rate:1h
         expr: |
           sum(increase(predictions_total{outcome="churn"}[1h]))
           /
-          sum(increase(predictions_total[1h]))
+          clamp_min(sum(increase(predictions_total[1h])), 1)
 
       # HTTP request rate by endpoint
       - record: job:http_requests:rate5m
@@ -110,10 +112,13 @@ groups:
 
       # Composite model health score (0 = unhealthy, 1 = perfect)
       # Formula: 40% accuracy + 40% drift health + 20% uptime
+      # All three terms are aggregated to a label-less vector so the
+      # arithmetic below can match them (Prometheus requires identical
+      # label sets for vector-to-vector binary ops).
       - record: job:model_health:composite_score
         expr: |
           (
-            0.4 * clamp_max(model_accuracy, 1)
+            0.4 * clamp_max(avg(model_accuracy), 1)
             +
             0.4 * (1 - clamp_max(max(feature_drift_score), 1))
             +

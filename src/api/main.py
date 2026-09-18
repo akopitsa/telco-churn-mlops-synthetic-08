@@ -18,12 +18,18 @@ from src.metrics import (
     ACTIVE_MODEL_VERSION,
     NULL_FEATURES_TOTAL,
     PREDICTION_CONFIDENCE,
+    HIGH_RISK_PREDICTIONS,
+    MODEL_ACCURACY,
     generate_latest,
     CONTENT_TYPE_LATEST,
 )
 
+# Predictions with churn probability above this threshold count as high-risk
+HIGH_RISK_THRESHOLD = 0.8
+
 from src.api.models import CustomerFeatures, PredictionResponse
 from src.api import predict as predict_module
+from pipelines import train as train_pipeline
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -85,6 +91,28 @@ def health():
     }
 
 
+@app.post("/train")
+def train(register: bool = False):
+    """Retrain the model from the current dataset and reload it into this API instance."""
+    try:
+        accuracy = train_pipeline.main(register=register)
+    except SystemExit:
+        raise HTTPException(status_code=400, detail="Training data not found or invalid")
+    except Exception as e:
+        logger.error(f"Помилка під час тренування: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Training failed: {str(e)}")
+
+    predict_module.load_model()
+    MODEL_ACCURACY.labels(model_version=MODEL_VERSION, dataset_split="test").set(accuracy)
+    return {
+        "status": "trained",
+        "accuracy": accuracy,
+        "model_path": predict_module.MODEL_PATH,
+        "model_source": predict_module.model_source,
+        "registered": register,
+    }
+
+
 @app.post("/predict", response_model=PredictionResponse)
 def predict(features: CustomerFeatures):
     input_data = features.dict()
@@ -126,6 +154,13 @@ def predict(features: CustomerFeatures):
             model_version=MODEL_VERSION,
             outcome=outcome,
         ).observe(churn_prob)
+
+        # Лічильник клієнтів з високим ризиком відтоку (ймовірність > 0.8)
+        if churn_prob > HIGH_RISK_THRESHOLD:
+            HIGH_RISK_PREDICTIONS.labels(
+                model_version=MODEL_VERSION,
+                contract_type=contract_type,
+            ).inc()
 
         return PredictionResponse(
             churn_probability=churn_prob,

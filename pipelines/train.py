@@ -128,11 +128,16 @@ def train_and_evaluate(model: Pipeline, X_train, X_test, y_train, y_test, show_p
 	return acc, trained_pipeline
 
 
-def main():
+def main(register: bool = None):
+	# Allow callers (e.g. the API's /train endpoint) to override the env-var default
+	register_flag = MLFLOW_REGISTER if register is None else register
+
 	df = load_data(DATA_PATH)
 
 	# Basic preprocessing
-	df = df.drop(['customerID'], axis=1, errors='ignore')
+	# customerID/RecordDate are identifiers/metadata, not predictive features,
+	# and are not part of the API's request schema.
+	df = df.drop(['customerID', 'RecordDate'], axis=1, errors='ignore')
 	if 'TotalCharges' in df.columns:
 		df['TotalCharges'] = pd.to_numeric(df['TotalCharges'], errors='coerce')
 	df = df.dropna()
@@ -165,6 +170,12 @@ def main():
 				except Exception:
 					pass
 
+				try:
+					dataset = mlflow.data.from_pandas(df, source=DATA_PATH, name='telco_customers', targets='Churn')
+					mlflow.log_input(dataset, context='training')
+				except Exception as e:
+					print(f'Warning: failed to log dataset to MLflow: {e}')
+
 				acc, model = train_and_evaluate(model, X_train, X_test, y_train, y_test, show_progress=True)
 				print(f'Accuracy: {acc:.4f}')
 				try:
@@ -173,7 +184,7 @@ def main():
 					pass
 
 				try:
-					if MLFLOW_REGISTER:
+					if register_flag:
 						mlflow.sklearn.log_model(model, 'model', registered_model_name=MLFLOW_REGISTERED_NAME)
 					else:
 						mlflow.sklearn.log_model(model, 'model')
@@ -192,6 +203,8 @@ def main():
 	os.makedirs(os.path.dirname(MODEL_PATH) or 'models', exist_ok=True)
 	joblib.dump(model, MODEL_PATH)
 	print(f'Model saved to {MODEL_PATH}')
+
+	return acc
 
 
 if __name__ == '__main__':

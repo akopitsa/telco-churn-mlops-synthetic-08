@@ -6,6 +6,7 @@ COPY requirements-api.txt .
 RUN pip install --no-cache-dir -r requirements-api.txt
 
 COPY src/ src/
+COPY pipelines/ pipelines/
 COPY models/ models/   
 
 EXPOSE 8000

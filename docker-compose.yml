@@ -37,10 +37,11 @@ services:
     networks:
       - mlops-net
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health').status == 200 else 1)"]
       interval: 10s
       timeout: 5s
       retries: 3
+      start_period: 15s
 
   # ── MLflow tracking server
   mlflow:
@@ -59,7 +60,7 @@ services:
         /bin/sh -c "
         pip install prometheus-flask-exporter &&
         mlflow server 
-        --backend-store-uri sqlite:///mlflow_db/mlflow.db 
+        --backend-store-uri sqlite:///mlflow_db/mlflow1.db 
         --default-artifact-root /mlartifacts 
         --host 0.0.0.0 
         --port 5000 
@@ -67,10 +68,11 @@ services:
     networks:
       - mlops-net
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      test: ["CMD", "python3", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:5000/health').status == 200 else 1)"]
       interval: 15s
       timeout: 5s
       retries: 5
+      start_period: 30s
 
 
 # =============================================================================

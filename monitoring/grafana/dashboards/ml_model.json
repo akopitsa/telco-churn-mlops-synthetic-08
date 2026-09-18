@@ -1,33 +1,4 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_PROMETHEUS",
-      "label": "Prometheus",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "prometheus",
-      "pluginName": "Prometheus"
-    },
-    {
-      "name": "DS_LOKI",
-      "label": "Loki",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "loki",
-      "pluginName": "Loki"
-    }
-  ],
-  "__requires": [
-    { "type": "grafana", "id": "grafana", "name": "Grafana", "version": "10.0.0" },
-    { "type": "datasource", "id": "prometheus", "name": "Prometheus", "version": "1.0.0" },
-    { "type": "datasource", "id": "loki", "name": "Loki", "version": "1.0.0" },
-    { "type": "panel", "id": "timeseries", "name": "Time series", "version": "" },
-    { "type": "panel", "id": "stat", "name": "Stat", "version": "" },
-    { "type": "panel", "id": "gauge", "name": "Gauge", "version": "" },
-    { "type": "panel", "id": "bargauge", "name": "Bar gauge", "version": "" },
-    { "type": "panel", "id": "piechart", "name": "Pie chart", "version": "" },
-    { "type": "panel", "id": "logs", "name": "Logs", "version": "" }
-  ],
   "annotations": {
     "list": [
       {
@@ -40,7 +11,7 @@
         "type": "dashboard"
       },
       {
-        "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+        "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
         "enable": true,
         "expr": "changes(active_model_version_info[5m]) > 0",
         "hide": false,
@@ -66,7 +37,7 @@
       "type": "row"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "thresholds" },
@@ -87,7 +58,7 @@
       "options": { "colorMode": "background", "graphMode": "area", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"] }, "textMode": "auto" },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
           "expr": "sum(rate(predictions_total[5m])) * 60",
           "legendFormat": "req/min",
           "refId": "A"
@@ -97,7 +68,7 @@
       "type": "stat"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "thresholds" },
@@ -120,7 +91,7 @@
       "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"] }, "textMode": "auto" },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
           "expr": "sum(rate(predictions_total{outcome=\"error\"}[5m])) / sum(rate(predictions_total[5m])) * 100",
           "legendFormat": "error %",
           "refId": "A"
@@ -130,7 +101,7 @@
       "type": "stat"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "thresholds" },
@@ -153,7 +124,7 @@
       "options": { "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"] }, "showThresholdLabels": false, "showThresholdMarkers": true },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
           "expr": "model_accuracy{model_version=~\"$model_version\"}",
           "legendFormat": "accuracy",
           "refId": "A"
@@ -163,7 +134,7 @@
       "type": "gauge"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "thresholds" },
@@ -184,7 +155,7 @@
       "options": { "colorMode": "background", "graphMode": "area", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"] }, "textMode": "auto" },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
           "expr": "histogram_quantile(0.99, sum(rate(prediction_latency_seconds_bucket{model_version=~\"$model_version\"}[5m])) by (le))",
           "legendFormat": "p99",
           "refId": "A"
@@ -194,7 +165,7 @@
       "type": "stat"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "thresholds" },
@@ -216,7 +187,7 @@
       "options": { "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"] }, "showThresholdLabels": false, "showThresholdMarkers": true },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
           "expr": "job:model_health:composite_score",
           "legendFormat": "health",
           "refId": "A"
@@ -226,7 +197,7 @@
       "type": "gauge"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "thresholds" },
@@ -245,7 +216,7 @@
       "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"] }, "textMode": "value_and_name" },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
           "expr": "up{job=\"churn-api\"}",
           "legendFormat": "{{job}}",
           "refId": "A"
@@ -262,7 +233,7 @@
       "type": "row"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
       "fieldConfig": {
         "defaults": { "color": { "mode": "palette-classic" }, "custom": { "lineWidth": 2 }, "unit": "reqps" },
         "overrides": [
@@ -276,7 +247,7 @@
       "options": { "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom" }, "tooltip": { "mode": "multi" } },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
           "expr": "sum by (outcome) (rate(predictions_total{model_version=~\"$model_version\"}[5m]))",
           "legendFormat": "{{outcome}}",
           "refId": "A"
@@ -286,7 +257,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
       "fieldConfig": {
         "defaults": { "color": { "mode": "palette-classic" }, "custom": { "lineWidth": 2 }, "unit": "s" }
       },
@@ -295,13 +266,13 @@
       "options": { "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom" }, "tooltip": { "mode": "multi" } },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
           "expr": "histogram_quantile(0.99, sum by (le, model_version) (rate(prediction_latency_seconds_bucket{model_version=~\"$model_version\"}[5m])))",
           "legendFormat": "p99 {{model_version}}",
           "refId": "A"
         },
         {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
           "expr": "histogram_quantile(0.50, sum by (le, model_version) (rate(prediction_latency_seconds_bucket{model_version=~\"$model_version\"}[5m])))",
           "legendFormat": "p50 {{model_version}}",
           "refId": "B"
@@ -318,7 +289,7 @@
       "type": "row"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
       "fieldConfig": {
         "defaults": { "color": { "mode": "palette-classic" }, "custom": { "lineWidth": 2 }, "unit": "percentunit", "min": 0, "max": 1 },
         "overrides": []
@@ -328,13 +299,13 @@
       "options": { "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "bottom" }, "tooltip": { "mode": "multi" } },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
           "expr": "model_accuracy{model_version=~\"$model_version\"}",
           "legendFormat": "accuracy {{model_version}}",
           "refId": "A"
         },
         {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
           "expr": "model_f1_score{model_version=~\"$model_version\"}",
           "legendFormat": "F1 {{model_version}}",
           "refId": "B"
@@ -344,7 +315,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "thresholds" },
@@ -367,7 +338,7 @@
       "options": { "displayMode": "gradient", "minVizHeight": 10, "minVizWidth": 0, "orientation": "horizontal", "reduceOptions": { "calcs": ["lastNotNull"] }, "showUnfilled": true },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
           "expr": "feature_drift_score{model_version=~\"$model_version\"}",
           "legendFormat": "{{feature_name}}",
           "refId": "A"
@@ -377,7 +348,7 @@
       "type": "bargauge"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
       "fieldConfig": {
         "defaults": { "color": { "mode": "palette-classic" }, "custom": { "lineWidth": 2 }, "unit": "percentunit", "min": 0, "max": 1 }
       },
@@ -386,7 +357,7 @@
       "options": { "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "bottom" }, "tooltip": { "mode": "multi" } },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
           "expr": "job:predicted_churn_rate:1h",
           "legendFormat": "churn rate (1h rolling)",
           "refId": "A"
@@ -403,14 +374,14 @@
       "type": "row"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
       "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": {} } },
       "gridPos": { "h": 8, "w": 8, "x": 0, "y": 24 },
       "id": 30,
       "options": { "legend": { "displayMode": "table", "placement": "right", "values": ["percent"] }, "pieType": "pie", "tooltip": { "mode": "single" } },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
           "expr": "sum by (outcome) (increase(predictions_total{model_version=~\"$model_version\"}[$__range]))",
           "legendFormat": "{{outcome}}",
           "refId": "A"
@@ -420,14 +391,14 @@
       "type": "piechart"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
       "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": {} } },
       "gridPos": { "h": 8, "w": 8, "x": 8, "y": 24 },
       "id": 31,
       "options": { "legend": { "displayMode": "table", "placement": "right", "values": ["percent"] }, "pieType": "donut", "tooltip": { "mode": "single" } },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
           "expr": "sum by (contract_type) (increase(predictions_total{model_version=~\"$model_version\"}[$__range]))",
           "legendFormat": "{{contract_type}}",
           "refId": "A"
@@ -437,7 +408,7 @@
       "type": "piechart"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
       "fieldConfig": {
         "defaults": { "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 0.05 }, { "color": "red", "value": 0.1 }] }, "unit": "short", "min": 0 }
       },
@@ -446,7 +417,7 @@
       "options": { "displayMode": "gradient", "orientation": "horizontal", "reduceOptions": { "calcs": ["lastNotNull"] }, "showUnfilled": true },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
           "expr": "sum by (feature_name) (increase(null_features_total[$__range]))",
           "legendFormat": "{{feature_name}}",
           "refId": "A"
@@ -463,13 +434,13 @@
       "type": "row"
     },
     {
-      "datasource": { "type": "loki", "uid": "${DS_LOKI}" },
+      "datasource": { "type": "loki", "uid": "loki_telco" },
       "gridPos": { "h": 8, "w": 24, "x": 0, "y": 33 },
       "id": 40,
       "options": { "dedupStrategy": "none", "enableLogDetails": true, "prettifyLogMessage": true, "showCommonLabels": false, "showLabels": false, "showTime": true, "sortOrder": "Descending", "wrapLogMessage": false },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "${DS_LOKI}" },
+          "datasource": { "type": "loki", "uid": "loki_telco" },
           "expr": "{job=\"churn-api\"} | json | level=~\"ERROR|WARNING\"",
           "legendFormat": "",
           "refId": "A"
@@ -486,7 +457,7 @@
     "list": [
       {
         "current": { "selected": true, "text": "All", "value": "$__all" },
-        "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+        "datasource": { "type": "prometheus", "uid": "prometheus_telco" },
         "definition": "label_values(predictions_total, model_version)",
         "hide": 0,
         "includeAll": true,

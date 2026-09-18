@@ -101,6 +101,13 @@ PREDICTION_CONFIDENCE = Histogram(
     buckets=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
 )
 
+HIGH_RISK_PREDICTIONS = Counter(
+    "high_risk_predictions_total",
+    "Predictions with churn probability > 0.8 (high-risk customers)",
+    ["model_version", "contract_type"],
+    # Usage: if churn_prob > 0.8: HIGH_RISK_PREDICTIONS.labels(...).inc()
+)
+
 # ═══════════════════════════════════════════════════════════════
 # DATA QUALITY & DRIFT
 # (updated by monitoring/drift_exporter.py via Pushgateway)
